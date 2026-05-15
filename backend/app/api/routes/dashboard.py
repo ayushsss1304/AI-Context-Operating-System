@@ -25,6 +25,41 @@ router = APIRouter(tags=["dashboard"])
 templates = Jinja2Templates(directory="app/templates")
 
 
+def build_demo_summary(
+    agents: list[Agent],
+    memories: list[Memory],
+    activities: list[Activity],
+    approvals: list[Approval],
+    active_task: Task | None,
+    timeline_items: list[dict[str, str]],
+) -> dict[str, str | int | bool]:
+    pending_approvals = [approval for approval in approvals if approval.status == "pending"]
+    current_step = timeline_items[-1]["label"] if timeline_items else "Not started"
+    owner = "Unassigned"
+    if active_task:
+        owner = next(
+            (agent.name for agent in agents if agent.id == active_task.current_owner_agent_id),
+            "Unassigned",
+        )
+
+    return {
+        "ready": bool(active_task),
+        "current_step": current_step,
+        "owner": owner,
+        "status": active_task.status if active_task else "No active task",
+        "agents": len(agents),
+        "memories": len(memories),
+        "events": len(activities),
+        "pending_approvals": len(pending_approvals),
+        "summary": (
+            f"{owner} owns a {active_task.status} task with {len(memories)} shared memories, "
+            f"{len(timeline_items)} handoff steps, and {len(pending_approvals)} pending approvals."
+            if active_task
+            else "Create a full demo to see agent handoff, shared memory, and human approval in one flow."
+        ),
+    }
+
+
 @router.get("/")
 def home() -> RedirectResponse:
     return RedirectResponse(url="/dashboard", status_code=303)
@@ -51,6 +86,7 @@ def dashboard(
     task_activities: list[Activity] = []
     task_approvals: list[Approval] = []
     timeline_items: list[dict[str, str]] = []
+    demo_summary = build_demo_summary(agents, memories, activities, approvals, active_task, timeline_items)
 
     if active_workspace_id:
         agents = session.exec(
@@ -98,6 +134,8 @@ def dashboard(
         else:
             timeline_items = build_handoff_trace(activities, agents_by_id)
 
+        demo_summary = build_demo_summary(agents, memories, activities, approvals, active_task, timeline_items)
+
     return templates.TemplateResponse(
         "dashboard.html",
         {
@@ -117,6 +155,7 @@ def dashboard(
             "activities": activities,
             "approvals": approvals,
             "pending_approval": next((approval for approval in approvals if approval.status == "pending"), None),
+            "demo_summary": demo_summary,
         },
     )
 

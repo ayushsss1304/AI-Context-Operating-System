@@ -227,6 +227,15 @@
         font-weight: 700;
         text-transform: uppercase;
       }
+      .summary-band {
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        background: var(--soft);
+        padding: 16px;
+      }
+      .summary-band p {
+        margin-bottom: 0;
+      }
       @media (max-width: 920px) {
         .content, .columns, .grid { grid-template-columns: 1fr; }
       }
@@ -335,6 +344,20 @@
       </section>
 
       <section class="stack">
+        <div class="summary-band">
+          <div class="row">
+            <h2>Demo Summary</h2>
+            <span class="badge">{{ demo_summary.status }}</span>
+          </div>
+          <p>{{ demo_summary.summary }}</p>
+          <div class="meta">
+            <span class="pill">Step: {{ demo_summary.current_step }}</span>
+            <span class="pill">Owner: {{ demo_summary.owner }}</span>
+            <span class="pill">{{ demo_summary.memories }} memories</span>
+            <span class="pill">{{ demo_summary.events }} events</span>
+          </div>
+        </div>
+
         <div class="grid">
           <div class="metric"><strong>{{ memories|length }}</strong><span>Shared memories</span></div>
           <div class="metric"><strong>{{ activities|length }}</strong><span>Timeline events</span></div>
