@@ -1,10 +1,16 @@
 # Frontend
 
-The frontend will be added after the backend customer-issue workflow is working end to end.
+Optional Next.js dashboard for AI Context OS.
 
-Planned stack:
+The primary MVP is the Python FastAPI dashboard at `http://127.0.0.1:8000/dashboard`. Use this frontend only when a separate JavaScript UI is needed.
 
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
+```bash
+npm.cmd install
+npm.cmd run dev
+```
+
+Open:
+
+```txt
+http://localhost:3000
+```

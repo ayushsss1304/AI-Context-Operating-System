@@ -5,7 +5,9 @@ from sqlmodel import Session, select
 
 from app.core.database import get_session
 from app.models.workspace import Workspace
-from app.schemas.workspace import WorkspaceCreate, WorkspaceRead
+from app.schemas.workspace import WorkspaceCreate, WorkspaceOverview, WorkspaceRead
+from app.services.workspace_overview_service import build_workspace_overview
+from app.services.workflow_service import ensure_demo_agents
 
 router = APIRouter(prefix="/workspaces", tags=["workspaces"])
 
@@ -16,6 +18,7 @@ def create_workspace(payload: WorkspaceCreate, session: Session = Depends(get_se
     session.add(workspace)
     session.commit()
     session.refresh(workspace)
+    ensure_demo_agents(session, workspace.id)
     return workspace
 
 
@@ -30,3 +33,8 @@ def get_workspace(workspace_id: UUID, session: Session = Depends(get_session)) -
     if not workspace:
         raise HTTPException(status_code=404, detail="Workspace not found")
     return workspace
+
+
+@router.get("/{workspace_id}/overview", response_model=WorkspaceOverview)
+def get_workspace_overview(workspace_id: UUID, session: Session = Depends(get_session)) -> dict:
+    return build_workspace_overview(session, workspace_id)

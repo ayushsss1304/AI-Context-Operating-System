@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Context OS</title>
+    <style>
+      :root {
+        --bg: #f7f7f4;
+        --ink: #161616;
+        --muted: #62645f;
+        --line: #d9d9d0;
+        --panel: #ffffff;
+        --accent: #0f766e;
+        --soft: #eef6f4;
+        --warn: #9f580a;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      header {
+        border-bottom: 1px solid var(--line);
+        background: white;
+      }
+      .top, .content {
+        width: min(1240px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 72px;
+      }
+      h1, h2, h3, p { margin-top: 0; }
+      h1 { margin-bottom: 4px; font-size: 22px; }
+      h2 { margin-bottom: 0; font-size: 16px; }
+      h3 { margin-bottom: 6px; font-size: 15px; }
+      p, .muted { color: var(--muted); line-height: 1.45; }
+      a { color: var(--accent); font-weight: 700; text-decoration: none; }
+      .content {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 20px;
+        padding: 22px 0;
+      }
+      .stack { display: grid; gap: 14px; align-content: start; }
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+      .panel-head {
+        border-bottom: 1px solid var(--line);
+        padding: 14px 16px;
+      }
+      .panel-body {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+      }
+      .field { display: grid; gap: 6px; }
+      label {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      input, textarea, select {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: white;
+        color: var(--ink);
+        font: inherit;
+        padding: 10px;
+      }
+      textarea { min-height: 116px; resize: vertical; }
+      button {
+        min-height: 38px;
+        border: 1px solid var(--accent);
+        border-radius: 6px;
+        background: var(--accent);
+        color: white;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 700;
+        padding: 8px 12px;
+      }
+      button.secondary {
+        border-color: var(--line);
+        background: white;
+        color: var(--ink);
+      }
+      .button-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .metric {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--soft);
+        padding: 14px;
+      }
+      .metric strong { display: block; font-size: 24px; }
+      .metric span { color: var(--muted); font-size: 13px; }
+      .columns {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 16px;
+      }
+      .item {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+      }
+      .item p { margin-bottom: 0; }
+      .badge {
+        display: inline-block;
+        border-radius: 999px;
+        background: #fff7ed;
+        color: var(--warn);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 8px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 8px;
+      }
+      .item-link {
+        display: block;
+        color: inherit;
+        font-weight: inherit;
+      }
+      .item.active {
+        border-color: var(--accent);
+        background: var(--soft);
+      }
+      .agent-role {
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .timeline {
+        display: grid;
+        gap: 0;
+      }
+      .timeline-step {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: 12px;
+        position: relative;
+      }
+      .timeline-step + .timeline-step {
+        padding-top: 12px;
+      }
+      .timeline-step::before {
+        content: "";
+        position: absolute;
+        top: 36px;
+        bottom: -12px;
+        left: 17px;
+        width: 1px;
+        background: var(--line);
+      }
+      .timeline-step:last-child::before {
+        display: none;
+      }
+      .step-number {
+        display: inline-grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--accent);
+        border-radius: 50%;
+        background: var(--soft);
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .handoff-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+      }
+      .handoff-card p {
+        margin-bottom: 8px;
+      }
+      .handoff-card p:last-child {
+        margin-bottom: 0;
+      }
+      .trace-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      @media (max-width: 920px) {
+        .content, .columns, .grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="top">
+        <div>
+          <h1>AI Context Operating System</h1>
+          <p>Python-rendered dashboard for shared memory, agent workflow, and human approval.</p>
+        </div>
+        <div class="meta">
+          <a href="/system/status">System Status</a>
+          <a href="/docs">API Docs</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="stack">
+        <div class="panel">
+          <div class="panel-head"><h2>Workspace</h2></div>
+          <form class="panel-body" method="post" action="/dashboard/demo-bootstrap">
+            <div class="field">
+              <label for="demo_workspace_name">Demo Workspace</label>
+              <input id="demo_workspace_name" name="workspace_name" value="Demo Company" required>
+            </div>
+            <div class="field">
+              <label for="demo_customer_name">Demo Customer</label>
+              <input id="demo_customer_name" name="customer_name" value="Acme SaaS" required>
+            </div>
+            <input type="hidden" name="issue" value="Users report that dashboard settings disappear after refreshing the page.">
+            <button type="submit">Create Full Demo</button>
+          </form>
+          <form class="panel-body" method="post" action="/dashboard/workspaces">
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" name="name" value="Demo Company" required>
+            </div>
+            <div class="field">
+              <label for="description">Description</label>
+              <input id="description" name="description" value="AI Context OS demo workspace">
+            </div>
+            <button type="submit">Create Workspace</button>
+          </form>
+          {% if workspaces %}
+          <form class="panel-body" method="get" action="/dashboard">
+            <div class="field">
+              <label for="workspace_id">Open Existing</label>
+              <select id="workspace_id" name="workspace_id">
+                {% for workspace in workspaces %}
+                <option value="{{ workspace.id }}" {% if active_workspace_id == workspace.id|string %}selected{% endif %}>
+                  {{ workspace.name }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit">Open Workspace</button>
+          </form>
+          {% endif %}
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Tasks</h2></div>
+          <div class="panel-body">
+            {% if tasks %}
+              {% for task in tasks %}
+              <article class="item {% if active_task_id == task.id|string %}active{% endif %}">
+                <a class="item-link" href="/dashboard?workspace_id={{ active_workspace_id }}&task_id={{ task.id }}">
+                  <div class="row">
+                    <h3>{{ task.title }}</h3>
+                    <span class="badge">{{ task.status }}</span>
+                  </div>
+                  <p>{{ task.description }}</p>
+                  <div class="meta">
+                    <span class="pill">{{ task.priority }} priority</span>
+                    {% if task.current_owner_agent_id and agents_by_id[task.current_owner_agent_id|string] %}
+                    <span class="pill">{{ agents_by_id[task.current_owner_agent_id|string].name }}</span>
+                    {% endif %}
+                  </div>
+                </a>
+              </article>
+              {% endfor %}
+            {% else %}
+              <p class="muted">Run a workflow to create a task.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Customer Issue</h2></div>
+          <form class="panel-body" method="post" action="/dashboard/workflows/customer-issue-demo">
+            <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
+            <div class="field">
+              <label for="customer_name">Customer</label>
+              <input id="customer_name" name="customer_name" value="Acme SaaS" required>
+            </div>
+            <div class="field">
+              <label for="issue">Issue</label>
+              <textarea id="issue" name="issue" required>Users report that dashboard settings disappear after refreshing the page.</textarea>
+            </div>
+            <button type="submit" {% if not active_workspace_id %}disabled{% endif %}>Run Agent Workflow</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="stack">
+        <div class="grid">
+          <div class="metric"><strong>{{ memories|length }}</strong><span>Shared memories</span></div>
+          <div class="metric"><strong>{{ activities|length }}</strong><span>Timeline events</span></div>
+          <div class="metric"><strong>{{ approvals|selectattr("status", "equalto", "pending")|list|length }}</strong><span>Pending approvals</span></div>
+          <div class="metric"><strong>{{ agents|length }}</strong><span>Registered agents</span></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Task Detail</h2></div>
+          <div class="panel-body">
+            {% if active_task %}
+            <article class="item">
+              <div class="row">
+                <h3>{{ active_task.title }}</h3>
+                <span class="badge">{{ active_task.status }}</span>
+              </div>
+              <p>{{ active_task.description }}</p>
+              <div class="meta">
+                <span class="pill">{{ active_task.priority }} priority</span>
+                {% if active_task.current_owner_agent_id and agents_by_id[active_task.current_owner_agent_id|string] %}
+                <span class="pill">Owner: {{ agents_by_id[active_task.current_owner_agent_id|string].name }}</span>
+                {% endif %}
+                <span class="pill">{{ task_activities|length }} task events</span>
+                <span class="pill">{{ task_approvals|length }} approvals</span>
+                <a class="pill" href="/tasks/{{ active_task.id }}/context-packet">Context packet</a>
+              </div>
+            </article>
+            {% if agents %}
+            <form class="item" method="post" action="/dashboard/tasks/{{ active_task.id }}/continue">
+              <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
+              <div class="field">
+                <label for="continue_agent_id">Resume As</label>
+                <select id="continue_agent_id" name="agent_id">
+                  {% for agent in agents %}
+                  <option value="{{ agent.id }}" {% if active_task.current_owner_agent_id == agent.id %}selected{% endif %}>
+                    {{ agent.name }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="field">
+                <label for="continue_instruction">Continuation Instruction</label>
+                <textarea id="continue_instruction" name="instruction" required>Resume this task from the context packet and write the next useful note.</textarea>
+              </div>
+              <button type="submit">Continue Task</button>
+            </form>
+            {% endif %}
+            {% else %}
+            <p class="muted">Select or create a task to see details.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Agent Registry</h2></div>
+          <div class="panel-body">
+            {% if agents %}
+              {% for agent in agents %}
+              <article class="item">
+                <div class="row">
+                  <h3>{{ agent.name }}</h3>
+                  <span class="agent-role">{{ agent.role }}</span>
+                </div>
+                <p>{{ agent.description }}</p>
+                <div class="meta">
+                  {% for capability in agent.capabilities %}
+                  <span class="pill">{{ capability }}</span>
+                  {% endfor %}
+                  {% for permission in agent.permissions %}
+                  <span class="pill">{{ permission }}</span>
+                  {% endfor %}
+                </div>
+              </article>
+              {% endfor %}
+            {% else %}
+            <p class="muted">Create a workspace to register the demo agents.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="panel">
+            <div class="panel-head"><h2>Handoff Timeline</h2></div>
+            <div class="panel-body">
+              {% if timeline_items %}
+              <div class="timeline">
+                {% for item in timeline_items %}
+                <article class="timeline-step">
+                  <span class="step-number">{{ item.step }}</span>
+                  <div class="handoff-card">
+                    <div class="row">
+                      <h3>{{ item.label }}</h3>
+                      <span class="pill">{{ item.actor }}</span>
+                    </div>
+                    {% if item.input %}
+                    <p><span class="trace-label">Context in</span><br>{{ item.input }}</p>
+                    {% endif %}
+                    <p><span class="trace-label">Output</span><br>{{ item.output }}</p>
+                  </div>
+                </article>
+                {% endfor %}
+              </div>
+              {% else %}
+                <p class="muted">Run the workflow to see agent actions.</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="stack">
+            <div class="panel">
+              <div class="panel-head"><h2>Approval</h2></div>
+              <div class="panel-body">
+                {% if pending_approval %}
+                <span class="badge">{{ pending_approval.status }}</span>
+                <article class="item">
+                  <h3>{{ pending_approval.title }}</h3>
+                  <p>{{ pending_approval.content }}</p>
+                </article>
+                <div class="button-row">
+                  <form method="post" action="/dashboard/approvals/{{ pending_approval.id }}/approve">
+                    <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
+                    <input type="hidden" name="reviewed_by" value="Ayush">
+                    <button type="submit">Approve</button>
+                  </form>
+                  <form method="post" action="/dashboard/approvals/{{ pending_approval.id }}/reject">
+                    <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
+                    <input type="hidden" name="reviewed_by" value="Ayush">
+                    <button class="secondary" type="submit">Reject</button>
+                  </form>
+                </div>
+                {% else %}
+                <p class="muted">No pending approval.</p>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head"><h2>Shared Memory</h2></div>
+              <div class="panel-body">
+                <form method="get" action="/dashboard">
+                  <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
+                  <div class="field">
+                    <label for="memory_query">Search Memories</label>
+                    <input id="memory_query" name="memory_query" value="{{ memory_query }}" placeholder="saved settings after reload">
+                  </div>
+                  <button type="submit" {% if not active_workspace_id %}disabled{% endif %}>Search Memory</button>
+                </form>
+                {% if memories %}
+                  {% for memory in memories %}
+                  <article class="item">
+                    <h3>{{ memory.title }}</h3>
+                    <p>{{ memory.content }}</p>
+                  </article>
+                  {% endfor %}
+                {% else %}
+                  <p class="muted">Memories appear after agent work.</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

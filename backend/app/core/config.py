@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     default_llm_provider: str = "groq"
     default_llm_model: str = "qwen-or-mistral-model-name"
     embedding_model: str = "embedding-model-name"
+    auto_create_tables: bool = True
     groq_api_key: str | None = None
     openrouter_api_key: str | None = None
     together_api_key: str | None = None

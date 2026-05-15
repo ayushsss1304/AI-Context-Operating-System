@@ -5,7 +5,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
 from app.core.database import get_session
+from app.models.activity import Activity
 from app.models.approval import Approval
+from app.models.task import Task
 from app.schemas.approval import ApprovalCreate, ApprovalRead, ApprovalReview
 
 router = APIRouter(prefix="/approvals", tags=["approvals"])
@@ -52,6 +54,24 @@ def review_approval(approval_id: UUID, status: str, reviewed_by: str, session: S
     approval.reviewed_by = reviewed_by
     approval.reviewed_at = datetime.utcnow()
     session.add(approval)
+
+    task = session.get(Task, approval.task_id)
+    if task:
+        task.status = "approved" if status == "approved" else "rejected"
+        task.updated_at = datetime.utcnow()
+        session.add(task)
+
+    session.add(
+        Activity(
+            workspace_id=approval.workspace_id,
+            task_id=approval.task_id,
+            action_type="approval_reviewed",
+            input_summary=approval.title,
+            output_summary=f"{reviewed_by} {status} the recommendation.",
+            full_output=approval.content,
+            status=status,
+        )
+    )
     session.commit()
     session.refresh(approval)
     return approval
