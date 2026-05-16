@@ -8,6 +8,8 @@ The MVP can be deployed as a single FastAPI app with the Python dashboard enable
 - Database: managed PostgreSQL
 - Frontend: use the FastAPI dashboard first; the Next.js app is optional
 
+This repo includes `render.yaml` for Render Blueprint deployment.
+
 ## Required Environment Variables
 
 ```env
@@ -86,3 +88,13 @@ Expected result:
 - Do not commit `.env` files.
 - Use managed PostgreSQL backups.
 - Keep the Python dashboard as the MVP UI until a separate frontend is required.
+
+## Render Blueprint Steps
+
+1. Push the repo to GitHub.
+2. In Render, create a new Blueprint from the GitHub repo.
+3. Render will read `render.yaml`.
+4. Set `GROQ_API_KEY` in the web service environment.
+5. Deploy.
+6. Open `/health`, `/dashboard`, and `/system/status`.
+7. Run `POST /workflows/demo-bootstrap` once to seed a demo workspace.

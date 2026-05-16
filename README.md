@@ -15,6 +15,7 @@ This repo contains the working MVP:
 - Context packets for workflow continuation
 - One-call demo bootstrap
 - System readiness endpoint
+- Render deployment blueprint
 
 ## Local Setup
 
