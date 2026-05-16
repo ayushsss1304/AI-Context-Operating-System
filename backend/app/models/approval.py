@@ -13,5 +13,6 @@ class Approval(SQLModel, table=True):
     content: str
     status: str = Field(default="pending", index=True, max_length=40)
     reviewed_by: str | None = None
+    review_note: str | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     reviewed_at: datetime | None = None

@@ -38,20 +38,27 @@ def list_approvals(
 
 @router.post("/{approval_id}/approve", response_model=ApprovalRead)
 def approve(approval_id: UUID, payload: ApprovalReview, session: Session = Depends(get_session)) -> Approval:
-    return review_approval(approval_id, "approved", payload.reviewed_by, session)
+    return review_approval(approval_id, "approved", payload.reviewed_by, session, payload.review_note)
 
 
 @router.post("/{approval_id}/reject", response_model=ApprovalRead)
 def reject(approval_id: UUID, payload: ApprovalReview, session: Session = Depends(get_session)) -> Approval:
-    return review_approval(approval_id, "rejected", payload.reviewed_by, session)
+    return review_approval(approval_id, "rejected", payload.reviewed_by, session, payload.review_note)
 
 
-def review_approval(approval_id: UUID, status: str, reviewed_by: str, session: Session) -> Approval:
+def review_approval(
+    approval_id: UUID,
+    status: str,
+    reviewed_by: str,
+    session: Session,
+    review_note: str | None = None,
+) -> Approval:
     approval = session.get(Approval, approval_id)
     if not approval:
         raise HTTPException(status_code=404, detail="Approval not found")
     approval.status = status
     approval.reviewed_by = reviewed_by
+    approval.review_note = review_note
     approval.reviewed_at = datetime.utcnow()
     session.add(approval)
 
@@ -67,7 +74,7 @@ def review_approval(approval_id: UUID, status: str, reviewed_by: str, session: S
             task_id=approval.task_id,
             action_type="approval_reviewed",
             input_summary=approval.title,
-            output_summary=f"{reviewed_by} {status} the recommendation.",
+            output_summary=_review_summary(reviewed_by, status, review_note),
             full_output=approval.content,
             status=status,
         )
@@ -75,3 +82,10 @@ def review_approval(approval_id: UUID, status: str, reviewed_by: str, session: S
     session.commit()
     session.refresh(approval)
     return approval
+
+
+def _review_summary(reviewed_by: str, status: str, review_note: str | None) -> str:
+    summary = f"{reviewed_by} {status} the recommendation."
+    if review_note:
+        return f"{summary} Note: {review_note}"
+    return summary

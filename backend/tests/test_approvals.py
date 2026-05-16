@@ -27,10 +27,17 @@ def test_review_approval_marks_approval_approved(session):
     session.commit()
     session.refresh(approval)
 
-    reviewed = review_approval(approval.id, "approved", "Ayush", session)
+    reviewed = review_approval(
+        approval.id,
+        "approved",
+        "Ayush",
+        session,
+        "Proceed with the recommendation.",
+    )
 
     assert reviewed.status == "approved"
     assert reviewed.reviewed_by == "Ayush"
+    assert reviewed.review_note == "Proceed with the recommendation."
     assert reviewed.reviewed_at is not None
 
     session.refresh(task)
@@ -39,6 +46,7 @@ def test_review_approval_marks_approval_approved(session):
     activities = session.exec(select(Activity).where(Activity.task_id == task.id)).all()
     assert len(activities) == 1
     assert activities[0].action_type == "approval_reviewed"
+    assert "Proceed with the recommendation." in activities[0].output_summary
 
 
 def test_review_approval_marks_task_rejected(session):
@@ -62,8 +70,15 @@ def test_review_approval_marks_task_rejected(session):
     session.commit()
     session.refresh(approval)
 
-    reviewed = review_approval(approval.id, "rejected", "Ayush", session)
+    reviewed = review_approval(
+        approval.id,
+        "rejected",
+        "Ayush",
+        session,
+        "Need clearer engineering evidence first.",
+    )
 
     assert reviewed.status == "rejected"
+    assert reviewed.review_note == "Need clearer engineering evidence first."
     session.refresh(task)
     assert task.status == "rejected"

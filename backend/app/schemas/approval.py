@@ -14,11 +14,13 @@ class ApprovalCreate(SQLModel):
 
 class ApprovalReview(SQLModel):
     reviewed_by: str
+    review_note: str | None = None
 
 
 class ApprovalRead(ApprovalCreate):
     id: UUID
     status: str
     reviewed_by: str | None = None
+    review_note: str | None = None
     created_at: datetime
     reviewed_at: datetime | None = None

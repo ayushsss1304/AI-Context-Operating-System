@@ -476,18 +476,18 @@
                   <h3>{{ pending_approval.title }}</h3>
                   <p>{{ pending_approval.content }}</p>
                 </article>
-                <div class="button-row">
-                  <form method="post" action="/dashboard/approvals/{{ pending_approval.id }}/approve">
-                    <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
-                    <input type="hidden" name="reviewed_by" value="Ayush">
+                <form method="post" action="/dashboard/approvals/{{ pending_approval.id }}/approve">
+                  <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
+                  <input type="hidden" name="reviewed_by" value="Ayush">
+                  <div class="field">
+                    <label for="review_note">Review Note</label>
+                    <textarea id="review_note" name="review_note" placeholder="Reason, risk, or next instruction for the agents."></textarea>
+                  </div>
+                  <div class="button-row">
                     <button type="submit">Approve</button>
-                  </form>
-                  <form method="post" action="/dashboard/approvals/{{ pending_approval.id }}/reject">
-                    <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
-                    <input type="hidden" name="reviewed_by" value="Ayush">
-                    <button class="secondary" type="submit">Reject</button>
-                  </form>
-                </div>
+                    <button class="secondary" type="submit" formaction="/dashboard/approvals/{{ pending_approval.id }}/reject">Reject</button>
+                  </div>
+                </form>
                 {% else %}
                 <p class="muted">No pending approval.</p>
                 {% endif %}

@@ -108,7 +108,7 @@ The main MVP path is Python-first:
 - The dashboard shows workspace, agent registry, task list, task detail, handoff timeline, memory search, and approvals.
 - The handoff timeline renders each workflow event in chronological order with the actor, incoming context, and output.
 - Workflow API responses include the same `handoff_trace` used by the dashboard, so external clients can show the continuity chain without rebuilding it.
-- Approval and rejection actions update the task status and write an audit event to the activity timeline.
+- Approval and rejection actions update the task status, store a manager review note, and write an audit event to the activity timeline.
 
 The current graph sequence is:
 

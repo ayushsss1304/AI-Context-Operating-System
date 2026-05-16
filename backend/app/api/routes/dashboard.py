@@ -230,9 +230,10 @@ def approve_dashboard_output(
     approval_id: UUID,
     workspace_id: UUID = Form(...),
     reviewed_by: str = Form("Ayush"),
+    review_note: str = Form(""),
     session: Session = Depends(get_session),
 ) -> RedirectResponse:
-    review_approval(approval_id, "approved", reviewed_by, session)
+    review_approval(approval_id, "approved", reviewed_by, session, review_note or None)
     return RedirectResponse(url=f"/dashboard?workspace_id={workspace_id}", status_code=303)
 
 
@@ -241,7 +242,8 @@ def reject_dashboard_output(
     approval_id: UUID,
     workspace_id: UUID = Form(...),
     reviewed_by: str = Form("Ayush"),
+    review_note: str = Form(""),
     session: Session = Depends(get_session),
 ) -> RedirectResponse:
-    review_approval(approval_id, "rejected", reviewed_by, session)
+    review_approval(approval_id, "rejected", reviewed_by, session, review_note or None)
     return RedirectResponse(url=f"/dashboard?workspace_id={workspace_id}", status_code=303)
