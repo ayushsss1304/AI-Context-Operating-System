@@ -1,6 +1,6 @@
 # AI Context Operating System
 
-A shared memory and workflow-continuity layer for AI-native teams using multiple AI agents, copilots, and automation tools.
+A shared memory and workflow-continuity layer for factory teams using multiple AI agents, copilots, and automation tools.
 
 ## Current Status
 
@@ -9,12 +9,12 @@ This repo contains the working MVP:
 - FastAPI app
 - SQLModel data models
 - CRUD APIs for workspaces, agents, memories, tasks, activities, and approvals
-- LangGraph-powered demo customer-issue workflow
+- LangGraph-powered factory issue-resolution workflow
 - Python-rendered dashboard with workspace, agent registry, shared memory, timeline, and approval views
 - Docker Compose PostgreSQL with pgvector enabled
 - Context packets for workflow continuation
 - One-call demo bootstrap
-- Realistic product-company demo data for a Smart TV firmware escalation
+- Realistic factory issue demo data for an SMT solder-defect escalation
 - System readiness endpoint
 - Render deployment blueprint
 
@@ -83,7 +83,9 @@ Or open the interactive API docs:
 http://127.0.0.1:8000/docs
 ```
 
-For a guided demo, see [DEMO.md](DEMO.md).
+For a guided Panasonic CHRO demo, see [DEMO.md](DEMO.md).
+
+For stakeholder positioning, pilot framing, and objection handling, see [PANASONIC_CHRO_PITCH.md](PANASONIC_CHRO_PITCH.md).
 
 For deployment notes, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
@@ -92,13 +94,19 @@ For MVP release notes, see [RELEASE_NOTES.md](RELEASE_NOTES.md).
 ## Demo Flow
 
 1. Create a workspace with `POST /workspaces`.
-2. The demo workspace registers Support, Engineering, Product, and Manager agents.
-3. Run `POST /workflows/customer-issue-demo` using the workspace ID.
+2. The demo workspace registers Line Production, Maintenance Engineering, Quality Process, and Plant Manager agents.
+3. Run `POST /workflows/factory-issue-demo` using the workspace ID.
 4. Inspect created memories with `GET /memories?workspace_id=...`.
 5. Inspect task activity with `GET /activities?workspace_id=...`.
 6. Approve or reject the pending approval.
 
-For a one-call demo setup, use `POST /workflows/demo-bootstrap`. It creates a Panasonic-style Smart TV reliability workspace, seeds realistic prior incident/QA/release-policy memories, runs the customer issue workflow, and returns the workflow result plus workspace overview.
+For a one-call demo setup, use `POST /workflows/demo-bootstrap`. It creates a Panasonic smart factory workspace, seeds realistic prior incident, maintenance playbook, and quality containment memories, runs the factory issue workflow, and returns the workflow result plus workspace overview.
+
+The default scenario is:
+
+```txt
+An SMT line starts showing intermittent solder defects after a material changeover.
+```
 
 ## MVP Status
 
@@ -111,8 +119,8 @@ The main MVP path is Python-first:
 - FastAPI serves the API and dashboard.
 - PostgreSQL stores workspace, agent, memory, task, activity, and approval records.
 - Alembic owns database schema migrations.
-- LangGraph orchestrates the customer issue workflow.
-- The Support, Engineering, and Product graph nodes call the configured LLM provider.
+- LangGraph orchestrates the factory issue workflow.
+- The Line Production, Maintenance Engineering, and Quality Process graph nodes call the configured LLM provider.
 - Memories receive local vector embeddings when they are created.
 - Memory search ranks results by vector similarity with keyword fallback.
 - Jinja2 renders the `/dashboard` page.
@@ -126,7 +134,7 @@ The current graph sequence is:
 ```txt
 create_task
   -> support_agent
-     stores customer issue as shared memory
+     stores factory issue as shared memory
   -> engineering_agent
      searches shared memory for relevant context
   -> product_agent

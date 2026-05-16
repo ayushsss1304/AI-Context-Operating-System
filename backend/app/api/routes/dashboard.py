@@ -178,13 +178,12 @@ def create_dashboard_workspace(
 
 @router.post("/dashboard/demo-bootstrap")
 def bootstrap_dashboard_demo(
-    workspace_name: str = Form("Panasonic Smart TV Reliability Desk"),
-    customer_name: str = Form("Panasonic Support Escalation - Europe Smart TV Line"),
+    workspace_name: str = Form("Panasonic Smart Factory Pilot"),
+    customer_name: str = Form("SMT Line 3"),
     issue: str = Form(
-        "After firmware v4.18.2 shipped to Panasonic MX800 and MX950 Smart TV models in Germany and the UK, "
-        "customers report Wi-Fi disconnects within 10 to 20 minutes of opening Netflix or YouTube. Support has "
-        "42 tickets in 36 hours, mostly from dual-band home routers. Rebooting the TV temporarily restores the "
-        "connection, but the issue returns after streaming resumes."
+        "An SMT line starts showing intermittent solder defects after a material changeover. "
+        "Operators see higher rework during the evening shift and need maintenance, quality, "
+        "and plant management to align on next action."
     ),
     session: Session = Depends(get_session),
 ) -> RedirectResponse:
@@ -203,6 +202,7 @@ def bootstrap_dashboard_demo(
 
 
 @router.post("/dashboard/workflows/customer-issue-demo")
+@router.post("/dashboard/workflows/factory-issue-demo")
 def run_dashboard_workflow(
     workspace_id: UUID = Form(...),
     customer_name: str = Form(...),

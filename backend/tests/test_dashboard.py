@@ -18,15 +18,15 @@ def test_build_timeline_items_orders_handoffs_by_creation_time(session):
 
     support_agent = Agent(
         workspace_id=workspace.id,
-        name="Support Agent",
-        role="support",
+        name="Line Production Agent",
+        role="production",
         capabilities=[],
         permissions=[],
     )
     engineering_agent = Agent(
         workspace_id=workspace.id,
-        name="Engineering Agent",
-        role="engineering",
+        name="Maintenance Engineering Agent",
+        role="maintenance_engineering",
         capabilities=[],
         permissions=[],
     )
@@ -44,15 +44,15 @@ def test_build_timeline_items_orders_handoffs_by_creation_time(session):
             agent_id=engineering_agent.id,
             action_type="memory_retrieved",
             input_summary="Search query",
-            output_summary="Customer issue memory",
+            output_summary="Factory issue memory",
             created_at=later,
         ),
         Activity(
             workspace_id=workspace.id,
             agent_id=support_agent.id,
             action_type="memory_created",
-            input_summary="Customer issue",
-            output_summary="Support summary",
+            input_summary="Factory issue",
+            output_summary="Production summary",
             created_at=earlier,
         ),
     ]
@@ -66,9 +66,9 @@ def test_build_timeline_items_orders_handoffs_by_creation_time(session):
     )
 
     assert [item["step"] for item in timeline_items] == ["1", "2"]
-    assert timeline_items[0]["actor"] == "Support Agent"
+    assert timeline_items[0]["actor"] == "Line Production Agent"
     assert timeline_items[0]["label"] == "Stored shared memory"
-    assert timeline_items[1]["actor"] == "Engineering Agent"
+    assert timeline_items[1]["actor"] == "Maintenance Engineering Agent"
     assert timeline_items[1]["label"] == "Retrieved context"
 
 
@@ -80,8 +80,8 @@ def test_build_demo_summary_explains_active_task_state(session):
 
     manager_agent = Agent(
         workspace_id=workspace.id,
-        name="Manager Agent",
-        role="manager",
+        name="Plant Manager Agent",
+        role="plant_manager",
         capabilities=[],
         permissions=[],
     )
@@ -91,15 +91,15 @@ def test_build_demo_summary_explains_active_task_state(session):
 
     task = Task(
         workspace_id=workspace.id,
-        title="Investigate customer issue",
+        title="Resolve factory issue",
         status="waiting_for_approval",
         current_owner_agent_id=manager_agent.id,
     )
     memory = Memory(
         workspace_id=workspace.id,
-        title="Customer issue",
-        content="Settings disappear after refresh.",
-        memory_type="customer_issue",
+        title="Factory issue",
+        content="Intermittent solder defects after material changeover.",
+        memory_type="factory_issue",
     )
     activity = Activity(
         workspace_id=workspace.id,
@@ -125,7 +125,7 @@ def test_build_demo_summary_explains_active_task_state(session):
     )
 
     assert summary["ready"] is True
-    assert summary["owner"] == "Manager Agent"
+    assert summary["owner"] == "Plant Manager Agent"
     assert summary["status"] == "waiting_for_approval"
     assert summary["current_step"] == "Requested approval"
     assert "1 shared memories" in summary["summary"]

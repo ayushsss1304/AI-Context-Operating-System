@@ -7,12 +7,12 @@ from app.services import task_continuation_service, workflow_service
 
 class FakeWorkflowLLMService:
     def generate(self, system_prompt: str, user_prompt: str, fallback: str) -> str:
-        if "Support Agent" in system_prompt:
-            return "Customer reports settings disappear after refresh."
-        if "Engineering Agent" in system_prompt:
-            return "Engineering should inspect persistence and settings APIs."
-        if "Product Agent" in system_prompt:
-            return "Product should treat this as a high-trust workflow continuity issue."
+        if "Line Production Agent" in system_prompt:
+            return "Operators report intermittent solder defects after material changeover."
+        if "Maintenance Engineering Agent" in system_prompt:
+            return "Maintenance should inspect material changeover records and solder profile history."
+        if "Quality Process Agent" in system_prompt:
+            return "Quality should treat this as a rework and defect-risk issue."
         return fallback
 
 
@@ -33,8 +33,8 @@ def test_continue_task_from_context_writes_memory_and_updates_owner(session, mon
         session,
         CustomerIssueDemoRequest(
             workspace_id=workspace.id,
-            customer_name="ContinuationCo",
-            issue="Saved settings disappear after page refresh.",
+            customer_name="SMT Line 3",
+            issue="Intermittent solder defects appear after material changeover.",
         ),
     )
     engineering_agent = result["task"].current_owner_agent_id
@@ -42,7 +42,7 @@ def test_continue_task_from_context_writes_memory_and_updates_owner(session, mon
         assert agent["actor"]
 
     registered_agents = workflow_service.ensure_demo_agents(session, workspace.id)
-    engineering_agent = registered_agents["Engineering Agent"]
+    engineering_agent = registered_agents["Maintenance Engineering Agent"]
 
     continuation = continue_task(
         result["task"].id,
@@ -57,5 +57,5 @@ def test_continue_task_from_context_writes_memory_and_updates_owner(session, mon
     assert continuation["task"].current_owner_agent_id == engineering_agent.id
     assert continuation["memory"].memory_type == "continuation_note"
     assert continuation["activity"].action_type == "task_continued"
-    assert continuation["context_packet"]["current_owner"].name == "Engineering Agent"
+    assert continuation["context_packet"]["current_owner"].name == "Maintenance Engineering Agent"
     assert continuation["context_packet"]["handoff_trace"][-1]["label"] == "Continued task"

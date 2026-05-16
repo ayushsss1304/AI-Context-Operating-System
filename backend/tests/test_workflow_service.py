@@ -6,16 +6,16 @@ from app.services import workflow_service
 
 class FakeLLMService:
     def generate(self, system_prompt: str, user_prompt: str, fallback: str) -> str:
-        if "Support Agent" in system_prompt:
-            return "Customer reports dashboard filters disappear after browser refresh."
-        if "Engineering Agent" in system_prompt:
-            return "Engineering should inspect persistence, client storage, and settings save APIs."
-        if "Product Agent" in system_prompt:
-            return "This affects user trust and should be approved for technical investigation."
+        if "Line Production Agent" in system_prompt:
+            return "Operators report intermittent solder defects after material changeover."
+        if "Maintenance Engineering Agent" in system_prompt:
+            return "Maintenance should inspect material changeover records, solder profile history, and feeder setup."
+        if "Quality Process Agent" in system_prompt:
+            return "Quality should treat this as a rework and defect-risk issue requiring controlled action."
         return fallback
 
 
-def test_customer_issue_workflow_creates_expected_records(session, monkeypatch):
+def test_factory_issue_workflow_creates_expected_records(session, monkeypatch):
     monkeypatch.setattr(workflow_service, "LLMService", FakeLLMService)
     workspace = Workspace(name="Workflow Test", description="Shared memory workflow")
     session.add(workspace)
@@ -26,8 +26,8 @@ def test_customer_issue_workflow_creates_expected_records(session, monkeypatch):
         session,
         CustomerIssueDemoRequest(
             workspace_id=workspace.id,
-            customer_name="WorkflowCo",
-            issue="Saved dashboard filters disappear after browser refresh.",
+            customer_name="SMT Line 3",
+            issue="Intermittent solder defects appear after material changeover.",
         ),
     )
 
@@ -37,11 +37,11 @@ def test_customer_issue_workflow_creates_expected_records(session, monkeypatch):
     assert len(result["activities"]) == 5
     assert result["approval"].status == "pending"
     assert [item["actor"] for item in result["handoff_trace"]] == [
-        "Support Agent",
-        "Engineering Agent",
-        "Engineering Agent",
-        "Product Agent",
-        "Manager Agent",
+        "Line Production Agent",
+        "Maintenance Engineering Agent",
+        "Maintenance Engineering Agent",
+        "Quality Process Agent",
+        "Plant Manager Agent",
     ]
     assert result["handoff_trace"][0]["label"] == "Stored shared memory"
 
@@ -56,13 +56,13 @@ def test_demo_agents_are_idempotently_registered(session):
     second_registration = workflow_service.ensure_demo_agents(session, workspace.id)
 
     assert set(first_registration) == {
-        "Support Agent",
-        "Engineering Agent",
-        "Product Agent",
-        "Manager Agent",
+        "Line Production Agent",
+        "Maintenance Engineering Agent",
+        "Quality Process Agent",
+        "Plant Manager Agent",
     }
     assert len(second_registration) == 4
-    assert first_registration["Support Agent"].id == second_registration["Support Agent"].id
+    assert first_registration["Line Production Agent"].id == second_registration["Line Production Agent"].id
 
 
 def test_engineering_agent_retrieves_support_memory_from_store(session, monkeypatch):
@@ -76,8 +76,8 @@ def test_engineering_agent_retrieves_support_memory_from_store(session, monkeypa
         session,
         CustomerIssueDemoRequest(
             workspace_id=workspace.id,
-            customer_name="RetrievalCo",
-            issue="Saved dashboard filters disappear after browser refresh.",
+            customer_name="SMT Line 4",
+            issue="Intermittent solder defects appear after material changeover.",
         ),
     )
 
@@ -86,8 +86,8 @@ def test_engineering_agent_retrieves_support_memory_from_store(session, monkeypa
     )
 
     assert retrieval.input_summary.startswith("Search query:")
-    assert retrieval.output_summary == "Customer issue - RetrievalCo"
+    assert retrieval.output_summary == "Factory issue - SMT Line 4"
 
     stored_retrieval = session.get(Activity, retrieval.id)
     assert stored_retrieval is not None
-    assert stored_retrieval.output_summary == "Customer issue - RetrievalCo"
+    assert stored_retrieval.output_summary == "Factory issue - SMT Line 4"

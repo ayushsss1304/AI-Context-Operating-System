@@ -9,12 +9,12 @@ from sqlmodel import select
 
 class FakeLLMService:
     def generate(self, system_prompt: str, user_prompt: str, fallback: str) -> str:
-        if "Support Agent" in system_prompt:
-            return "Customer reports settings disappear after refresh."
-        if "Engineering Agent" in system_prompt:
-            return "Engineering should inspect persistence and settings APIs."
-        if "Product Agent" in system_prompt:
-            return "Product should treat this as a high-trust workflow continuity issue."
+        if "Line Production Agent" in system_prompt:
+            return "Operators report intermittent solder defects after material changeover."
+        if "Maintenance Engineering Agent" in system_prompt:
+            return "Maintenance should inspect material changeover records and solder profile history."
+        if "Quality Process Agent" in system_prompt:
+            return "Quality should treat this as a rework and defect-risk issue."
         return fallback
 
 
@@ -27,10 +27,10 @@ def test_create_workspace_registers_demo_agents(session):
     agents = session.exec(select(Agent).where(Agent.workspace_id == workspace.id)).all()
 
     assert {agent.name for agent in agents} == {
-        "Support Agent",
-        "Engineering Agent",
-        "Product Agent",
-        "Manager Agent",
+        "Line Production Agent",
+        "Maintenance Engineering Agent",
+        "Quality Process Agent",
+        "Plant Manager Agent",
     }
 
 
@@ -45,8 +45,8 @@ def test_workspace_overview_returns_latest_context_state(session, monkeypatch):
         session,
         CustomerIssueDemoRequest(
             workspace_id=workspace.id,
-            customer_name="OverviewCo",
-            issue="Saved settings disappear after page refresh.",
+            customer_name="SMT Line 3",
+            issue="Intermittent solder defects appear after material changeover.",
         ),
     )
 
@@ -59,9 +59,9 @@ def test_workspace_overview_returns_latest_context_state(session, monkeypatch):
     assert len(overview["approvals"]) == 1
     assert overview["active_task"].status == "waiting_for_approval"
     assert [item["actor"] for item in overview["handoff_trace"]] == [
-        "Support Agent",
-        "Engineering Agent",
-        "Engineering Agent",
-        "Product Agent",
-        "Manager Agent",
+        "Line Production Agent",
+        "Maintenance Engineering Agent",
+        "Maintenance Engineering Agent",
+        "Quality Process Agent",
+        "Plant Manager Agent",
     ]

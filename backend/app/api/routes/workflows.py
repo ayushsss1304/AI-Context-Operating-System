@@ -24,6 +24,14 @@ def customer_issue_demo(
     return run_customer_issue_demo(session, payload)
 
 
+@router.post("/factory-issue-demo", response_model=CustomerIssueDemoResponse)
+def factory_issue_demo(
+    payload: CustomerIssueDemoRequest,
+    session: Session = Depends(get_session),
+) -> dict:
+    return run_customer_issue_demo(session, payload)
+
+
 @router.post("/demo-bootstrap", response_model=DemoBootstrapResponse)
 def demo_bootstrap(
     payload: DemoBootstrapRequest,

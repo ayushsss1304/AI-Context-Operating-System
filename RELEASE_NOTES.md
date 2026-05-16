@@ -1,5 +1,22 @@
 # Release Notes
 
+## v0.1.3-panasonic-pitch
+
+Stakeholder-facing update for a Panasonic CHRO factory issue-resolution pitch.
+
+### Added
+
+- Panasonic CHRO pitch document with pilot ask, objection handling, and ROI framing.
+- Factory issue-resolution demo script focused on workforce continuity and FTE-equivalent capacity.
+- `/workflows/factory-issue-demo` route while preserving the existing customer-issue endpoint for compatibility.
+- Dashboard CHRO pilot message and SMT solder-defect default scenario.
+
+### Changed
+
+- Demo agents are now Line Production, Maintenance Engineering, Quality Process, and Plant Manager agents.
+- Workflow prompts and generated memory titles now use factory, maintenance, quality, and approval language.
+- Demo bootstrap defaults now use a Panasonic smart factory pilot scenario.
+
 ## v0.1.0-mvp
 
 AI Context OS MVP proves shared memory, workflow continuity, multi-agent handoff, and human oversight in a single backend-first demo.

@@ -12,8 +12,11 @@ from app.schemas.workspace import WorkspaceOverview
 
 class CustomerIssueDemoRequest(SQLModel):
     workspace_id: UUID
-    customer_name: str = "Demo Customer"
+    customer_name: str = "SMT Line 3"
     issue: str
+
+
+FactoryIssueDemoRequest = CustomerIssueDemoRequest
 
 
 class CustomerIssueDemoResponse(SQLModel):
@@ -25,16 +28,13 @@ class CustomerIssueDemoResponse(SQLModel):
 
 
 class DemoBootstrapRequest(SQLModel):
-    workspace_name: str = "Panasonic Smart TV Reliability Desk"
-    workspace_description: str | None = (
-        "Shared AI workspace for connected TV support, QA, firmware, product, and release decisions."
-    )
-    customer_name: str = "Panasonic Support Escalation - Europe Smart TV Line"
+    workspace_name: str = "Panasonic Smart Factory Pilot"
+    workspace_description: str | None = "Factory issue-resolution pilot for workforce continuity"
+    customer_name: str = "SMT Line 3"
     issue: str = (
-        "After firmware v4.18.2 shipped to Panasonic MX800 and MX950 Smart TV models in Germany and the UK, "
-        "customers report Wi-Fi disconnects within 10 to 20 minutes of opening Netflix or YouTube. Support has "
-        "42 tickets in 36 hours, mostly from dual-band home routers. Rebooting the TV temporarily restores the "
-        "connection, but the issue returns after streaming resumes."
+        "An SMT line starts showing intermittent solder defects after a material changeover. "
+        "Operators see higher rework during the evening shift and need maintenance, quality, "
+        "and plant management to align on next action."
     )
 
 

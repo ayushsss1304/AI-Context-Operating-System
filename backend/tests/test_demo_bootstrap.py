@@ -5,12 +5,12 @@ from app.services import workflow_service
 
 class FakeLLMService:
     def generate(self, system_prompt: str, user_prompt: str, fallback: str) -> str:
-        if "Support Agent" in system_prompt:
-            return "Customer reports settings disappear after refresh."
-        if "Engineering Agent" in system_prompt:
-            return "Engineering should inspect persistence and settings APIs."
-        if "Product Agent" in system_prompt:
-            return "Product should treat this as a high-trust workflow continuity issue."
+        if "Line Production Agent" in system_prompt:
+            return "Operators report intermittent solder defects after material changeover."
+        if "Maintenance Engineering Agent" in system_prompt:
+            return "Maintenance should inspect material changeover records and solder profile history."
+        if "Quality Process Agent" in system_prompt:
+            return "Quality should treat this as a rework and defect-risk issue."
         return fallback
 
 
@@ -21,8 +21,8 @@ def test_demo_bootstrap_creates_workspace_and_runs_full_demo(session, monkeypatc
         DemoBootstrapRequest(
             workspace_name="Bootstrap Demo",
             workspace_description="One call MVP setup",
-            customer_name="BootstrapCo",
-            issue="Settings disappear after browser refresh.",
+            customer_name="SMT Line 3",
+            issue="Intermittent solder defects appear after material changeover.",
         ),
         session,
     )
@@ -34,8 +34,8 @@ def test_demo_bootstrap_creates_workspace_and_runs_full_demo(session, monkeypatc
     assert len(result["overview"]["approvals"]) == 1
     assert result["workflow"]["task"].status == "waiting_for_approval"
     assert len(result["workflow"]["handoff_trace"]) == 5
-    assert result["overview"]["handoff_trace"][-1]["actor"] == "Manager Agent"
+    assert result["overview"]["handoff_trace"][-1]["actor"] == "Plant Manager Agent"
     assert any(
-        memory.title == "Prior incident - MX700 Wi-Fi reconnect regression"
+        memory.title == "Prior incident - SMT solder bridge after paste lot change"
         for memory in result["overview"]["memories"]
     )

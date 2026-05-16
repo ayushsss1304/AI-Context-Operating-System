@@ -246,7 +246,7 @@
       <div class="top">
         <div>
           <h1>AI Context Operating System</h1>
-          <p>Python-rendered dashboard for shared memory, agent workflow, and human approval.</p>
+          <p>Factory issue-resolution demo for workforce continuity, shared memory, and human approval.</p>
         </div>
         <div class="meta">
           <a href="/system/status">System Status</a>
@@ -261,24 +261,24 @@
           <div class="panel-head"><h2>Workspace</h2></div>
           <form class="panel-body" method="post" action="/dashboard/demo-bootstrap">
             <div class="field">
-              <label for="demo_workspace_name">Demo Workspace</label>
-              <input id="demo_workspace_name" name="workspace_name" value="Panasonic Smart TV Reliability Desk" required>
+              <label for="demo_workspace_name">Pilot Workspace</label>
+              <input id="demo_workspace_name" name="workspace_name" value="Panasonic Smart Factory Pilot" required>
             </div>
             <div class="field">
-              <label for="demo_customer_name">Demo Customer</label>
-              <input id="demo_customer_name" name="customer_name" value="Panasonic Support Escalation - Europe Smart TV Line" required>
+              <label for="demo_customer_name">Factory Area</label>
+              <input id="demo_customer_name" name="customer_name" value="SMT Line 3" required>
             </div>
-            <input type="hidden" name="issue" value="After firmware v4.18.2 shipped to Panasonic MX800 and MX950 Smart TV models in Germany and the UK, customers report Wi-Fi disconnects within 10 to 20 minutes of opening Netflix or YouTube. Support has 42 tickets in 36 hours, mostly from dual-band home routers. Rebooting the TV temporarily restores the connection, but the issue returns after streaming resumes.">
-            <button type="submit">Create Full Demo</button>
+            <input type="hidden" name="issue" value="An SMT line starts showing intermittent solder defects after a material changeover. Operators see higher rework during the evening shift and need maintenance, quality, and plant management to align on next action.">
+            <button type="submit">Create Factory Pilot Demo</button>
           </form>
           <form class="panel-body" method="post" action="/dashboard/workspaces">
             <div class="field">
               <label for="name">Name</label>
-              <input id="name" name="name" value="Panasonic Smart TV Reliability Desk" required>
+              <input id="name" name="name" value="Panasonic Smart Factory Pilot" required>
             </div>
             <div class="field">
               <label for="description">Description</label>
-              <input id="description" name="description" value="Shared AI workspace for connected TV support, QA, firmware, product, and release decisions.">
+              <input id="description" name="description" value="Factory issue-resolution pilot for workforce continuity">
             </div>
             <button type="submit">Create Workspace</button>
           </form>
@@ -327,16 +327,16 @@
         </div>
 
         <div class="panel">
-          <div class="panel-head"><h2>Customer Issue</h2></div>
-          <form class="panel-body" method="post" action="/dashboard/workflows/customer-issue-demo">
+          <div class="panel-head"><h2>Factory Issue</h2></div>
+          <form class="panel-body" method="post" action="/dashboard/workflows/factory-issue-demo">
             <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
             <div class="field">
-              <label for="customer_name">Customer</label>
-              <input id="customer_name" name="customer_name" value="Panasonic Support Escalation - Europe Smart TV Line" required>
+              <label for="customer_name">Factory Area</label>
+              <input id="customer_name" name="customer_name" value="SMT Line 3" required>
             </div>
             <div class="field">
               <label for="issue">Issue</label>
-              <textarea id="issue" name="issue" required>After firmware v4.18.2 shipped to Panasonic MX800 and MX950 Smart TV models in Germany and the UK, customers report Wi-Fi disconnects within 10 to 20 minutes of opening Netflix or YouTube. Support has 42 tickets in 36 hours, mostly from dual-band home routers. Rebooting the TV temporarily restores the connection, but the issue returns after streaming resumes.</textarea>
+              <textarea id="issue" name="issue" required>An SMT line starts showing intermittent solder defects after a material changeover. Operators see higher rework during the evening shift and need maintenance, quality, and plant management to align on next action.</textarea>
             </div>
             <button type="submit" {% if not active_workspace_id %}disabled{% endif %}>Run Agent Workflow</button>
           </form>
@@ -353,8 +353,25 @@
           <div class="meta">
             <span class="pill">Step: {{ demo_summary.current_step }}</span>
             <span class="pill">Owner: {{ demo_summary.owner }}</span>
+            <span class="pill">Capacity focus: fewer repeated handoffs</span>
             <span class="pill">{{ demo_summary.memories }} memories</span>
             <span class="pill">{{ demo_summary.events }} events</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>CHRO Pilot Message</h2></div>
+          <div class="panel-body">
+            <article class="item">
+              <h3>Workforce continuity layer</h3>
+              <p>Reduce manual coordination load, preserve expert knowledge, improve shift handovers, and unlock FTE-equivalent capacity without positioning the tool as a headcount-cutting system.</p>
+              <div class="meta">
+                <span class="pill">4-week pilot</span>
+                <span class="pill">1 plant line</span>
+                <span class="pill">10-15 users</span>
+                <span class="pill">30-50 issues</span>
+              </div>
+            </article>
           </div>
         </div>
 
@@ -501,7 +518,7 @@
                   <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
                   <div class="field">
                     <label for="memory_query">Search Memories</label>
-                    <input id="memory_query" name="memory_query" value="{{ memory_query }}" placeholder="saved settings after reload">
+                    <input id="memory_query" name="memory_query" value="{{ memory_query }}" placeholder="solder defects material changeover">
                   </div>
                   <button type="submit" {% if not active_workspace_id %}disabled{% endif %}>Search Memory</button>
                 </form>

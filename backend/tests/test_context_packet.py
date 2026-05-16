@@ -6,12 +6,12 @@ from app.services import workflow_service
 
 class FakeLLMService:
     def generate(self, system_prompt: str, user_prompt: str, fallback: str) -> str:
-        if "Support Agent" in system_prompt:
-            return "Customer reports settings disappear after refresh."
-        if "Engineering Agent" in system_prompt:
-            return "Engineering should inspect persistence and settings APIs."
-        if "Product Agent" in system_prompt:
-            return "Product should treat this as a high-trust workflow continuity issue."
+        if "Line Production Agent" in system_prompt:
+            return "Operators report intermittent solder defects after material changeover."
+        if "Maintenance Engineering Agent" in system_prompt:
+            return "Maintenance should inspect material changeover records and solder profile history."
+        if "Quality Process Agent" in system_prompt:
+            return "Quality should treat solder defects after material changeover as a rework and defect-risk issue."
         return fallback
 
 
@@ -26,17 +26,17 @@ def test_task_context_packet_returns_resume_ready_state(session, monkeypatch):
         session,
         CustomerIssueDemoRequest(
             workspace_id=workspace.id,
-            customer_name="PacketCo",
-            issue="Saved settings disappear after page refresh.",
+            customer_name="SMT Line 3",
+            issue="Intermittent solder defects appear after material changeover.",
         ),
     )
 
     packet = get_task_context_packet(result["task"].id, session)
 
     assert packet["task"].id == result["task"].id
-    assert packet["current_owner"].name == "Manager Agent"
+    assert packet["current_owner"].name == "Plant Manager Agent"
     assert len(packet["relevant_memories"]) == 3
     assert len(packet["approvals"]) == 1
     assert len(packet["handoff_trace"]) == 5
     assert "waiting_for_approval" in packet["resume_summary"]
-    assert "Manager Agent" in packet["resume_summary"]
+    assert "Plant Manager Agent" in packet["resume_summary"]

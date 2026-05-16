@@ -19,30 +19,30 @@ from app.services.timeline_service import build_handoff_trace
 
 DEMO_AGENTS = [
     {
-        "name": "Support Agent",
-        "role": "support",
-        "description": "Understands customer issues and creates clear summaries.",
-        "capabilities": ["issue_summary", "memory_write"],
+        "name": "Line Production Agent",
+        "role": "production",
+        "description": "Captures line incidents, shift context, and operator observations.",
+        "capabilities": ["issue_capture", "shift_handoff", "memory_write"],
         "permissions": ["create_memory", "create_activity"],
     },
     {
-        "name": "Engineering Agent",
-        "role": "engineering",
-        "description": "Reviews technical context and identifies likely causes.",
-        "capabilities": ["memory_search", "technical_analysis"],
+        "name": "Maintenance Engineering Agent",
+        "role": "maintenance_engineering",
+        "description": "Reviews equipment, process, and maintenance context to identify likely causes.",
+        "capabilities": ["memory_search", "technical_analysis", "maintenance_triage"],
         "permissions": ["read_memory", "create_memory", "create_activity"],
     },
     {
-        "name": "Product Agent",
-        "role": "product",
-        "description": "Converts technical and customer context into product impact.",
-        "capabilities": ["impact_summary", "recommendation"],
+        "name": "Quality Process Agent",
+        "role": "quality_process",
+        "description": "Converts production and engineering context into quality impact and process risk.",
+        "capabilities": ["quality_impact", "recommendation"],
         "permissions": ["read_memory", "create_memory", "create_activity"],
     },
     {
-        "name": "Manager Agent",
-        "role": "manager",
-        "description": "Reviews outputs and requests human approval.",
+        "name": "Plant Manager Agent",
+        "role": "plant_manager",
+        "description": "Reviews outputs and requests human approval before recommendations move forward.",
         "capabilities": ["approval_request", "oversight"],
         "permissions": ["create_approval", "create_activity"],
     },
@@ -84,11 +84,11 @@ def create_task_node(state: CustomerIssueWorkflowState) -> CustomerIssueWorkflow
     session = state["session"]
     payload = state["payload"]
     agents = ensure_demo_agents(session, payload.workspace_id)
-    support_agent = agents["Support Agent"]
+    support_agent = agents["Line Production Agent"]
 
     task = Task(
         workspace_id=payload.workspace_id,
-        title=f"Investigate issue from {payload.customer_name}",
+        title=f"Resolve factory issue at {payload.customer_name}",
         description=payload.issue,
         status="in_progress",
         current_owner_agent_id=support_agent.id,
@@ -111,16 +111,16 @@ def support_agent_node(state: CustomerIssueWorkflowState) -> CustomerIssueWorkfl
     session = state["session"]
     payload = state["payload"]
     task = state["task"]
-    support_agent = state["agents"]["Support Agent"]
+    support_agent = state["agents"]["Line Production Agent"]
 
-    fallback = f"{payload.customer_name} reported: {payload.issue}"
+    fallback = f"{payload.customer_name} reported this factory issue: {payload.issue}"
     support_summary = state["llm"].generate(
         system_prompt=(
-            "You are the Support Agent in an AI coordination system. "
-            "Summarize customer issues clearly and preserve concrete details. "
+            "You are the Line Production Agent in an AI coordination system. "
+            "Summarize factory line issues clearly and preserve concrete operator, shift, material, and equipment details. "
             "Return 2 concise plain-text sentences. Do not use markdown, headings, bullets, or labels."
         ),
-        user_prompt=f"Customer: {payload.customer_name}\nIssue: {payload.issue}",
+        user_prompt=f"Factory area: {payload.customer_name}\nIssue: {payload.issue}",
         fallback=fallback,
     )
     memory = state["memory_service"].create(
@@ -128,11 +128,11 @@ def support_agent_node(state: CustomerIssueWorkflowState) -> CustomerIssueWorkfl
         MemoryCreate(
             workspace_id=payload.workspace_id,
             created_by_agent_id=support_agent.id,
-            title=f"Customer issue - {payload.customer_name}",
+            title=f"Factory issue - {payload.customer_name}",
             content=support_summary,
-            memory_type="customer_issue",
-            tags=["customer_issue", "support", payload.customer_name.lower().replace(" ", "-")],
-            source="customer-issue-demo",
+            memory_type="factory_issue",
+            tags=["factory_issue", "production", payload.customer_name.lower().replace(" ", "-")],
+            source="factory-issue-demo",
             importance_score=0.8,
         ),
     )
@@ -159,7 +159,7 @@ def engineering_agent_node(state: CustomerIssueWorkflowState) -> CustomerIssueWo
     session = state["session"]
     payload = state["payload"]
     task = state["task"]
-    engineering_agent = state["agents"]["Engineering Agent"]
+    engineering_agent = state["agents"]["Maintenance Engineering Agent"]
     retrieval_query = f"{payload.customer_name} {payload.issue}"
     retrieved_memories = state["memory_service"].search(
         session,
@@ -172,13 +172,13 @@ def engineering_agent_node(state: CustomerIssueWorkflowState) -> CustomerIssueWo
     support_memory = retrieved_memories[0] if retrieved_memories else state["memories"][0]
 
     fallback = (
-        "Engineering reviewed the customer issue memory and should inspect recent changes, "
-        "logs, and related error reports before proposing a fix."
+        "Maintenance engineering reviewed the factory issue memory and should inspect material changeover records, "
+        "machine setup, solder profile history, and recent defect patterns before proposing a fix."
     )
     engineering_note = state["llm"].generate(
         system_prompt=(
-            "You are the Engineering Agent in an AI coordination system. "
-            "Create a practical technical investigation note from the shared support memory. "
+            "You are the Maintenance Engineering Agent in an AI coordination system. "
+            "Create a practical technical investigation note from the shared production memory. "
             "Mention likely areas to inspect, but do not pretend to know facts not provided. "
             "Return 3 concise plain-text sentences. Do not use markdown, headings, bullets, or labels."
         ),
@@ -190,11 +190,11 @@ def engineering_agent_node(state: CustomerIssueWorkflowState) -> CustomerIssueWo
         MemoryCreate(
             workspace_id=payload.workspace_id,
             created_by_agent_id=engineering_agent.id,
-            title="Technical investigation note",
+            title="Maintenance investigation note",
             content=engineering_note,
             memory_type="technical_note",
-            tags=["engineering", "investigation"],
-            source="customer-issue-demo",
+            tags=["maintenance", "engineering", "investigation"],
+            source="factory-issue-demo",
             importance_score=0.7,
         ),
     )
@@ -233,18 +233,18 @@ def product_agent_node(state: CustomerIssueWorkflowState) -> CustomerIssueWorkfl
     session = state["session"]
     payload = state["payload"]
     task = state["task"]
-    product_agent = state["agents"]["Product Agent"]
+    product_agent = state["agents"]["Quality Process Agent"]
     engineering_note = state["engineering_note"]
 
     fallback = (
-        "Product impact: this issue may affect customer trust and should be tracked as a "
-        "workflow-continuity case until engineering confirms the root cause."
+        "Quality impact: this issue may increase rework, scrap, and inspection load, so it should be tracked as a "
+        "workflow-continuity case until maintenance engineering confirms the root cause."
     )
     product_summary = state["llm"].generate(
         system_prompt=(
-            "You are the Product Agent in an AI coordination system. "
-            "Convert support and engineering context into a product impact summary. "
-            "Focus on user impact, priority, and what a manager should approve next. "
+            "You are the Quality Process Agent in an AI coordination system. "
+            "Convert production and maintenance engineering context into a quality impact summary. "
+            "Focus on defect risk, production impact, priority, and what a plant manager should approve next. "
             "Return 3 concise plain-text sentences. Do not use markdown, headings, bullets, or labels."
         ),
         user_prompt=(
@@ -258,11 +258,11 @@ def product_agent_node(state: CustomerIssueWorkflowState) -> CustomerIssueWorkfl
         MemoryCreate(
             workspace_id=payload.workspace_id,
             created_by_agent_id=product_agent.id,
-            title="Product impact summary",
+            title="Quality impact summary",
             content=product_summary,
-            memory_type="product_note",
-            tags=["product", "impact"],
-            source="customer-issue-demo",
+            memory_type="quality_note",
+            tags=["quality", "process", "impact"],
+            source="factory-issue-demo",
             importance_score=0.7,
         ),
     )
@@ -289,13 +289,13 @@ def manager_agent_node(state: CustomerIssueWorkflowState) -> CustomerIssueWorkfl
     session = state["session"]
     payload = state["payload"]
     task = state["task"]
-    manager_agent = state["agents"]["Manager Agent"]
+    manager_agent = state["agents"]["Plant Manager Agent"]
 
     approval = Approval(
         workspace_id=payload.workspace_id,
         task_id=task.id,
         requested_by_agent_id=manager_agent.id,
-        title="Approve customer issue recommendation",
+        title="Approve factory issue recommendation",
         content=f"{state['support_summary']}\n\n{state['engineering_note']}\n\n{state['product_summary']}",
     )
     session.add(approval)
