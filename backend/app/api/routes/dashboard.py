@@ -1,4 +1,5 @@
 from uuid import UUID
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
@@ -22,7 +23,7 @@ from app.api.routes.workflows import demo_bootstrap
 from app.services.workflow_service import ensure_demo_agents, run_customer_issue_demo
 
 router = APIRouter(tags=["dashboard"])
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory=str(Path(__file__).resolve().parents[2] / "templates"))
 
 
 def build_demo_summary(
