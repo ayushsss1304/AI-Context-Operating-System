@@ -4,7 +4,7 @@ A shared memory and workflow-continuity layer for AI-native teams using multiple
 
 ## Current Status
 
-This repo has the first backend skeleton for the MVP:
+This repo contains the working MVP:
 
 - FastAPI app
 - SQLModel data models
@@ -12,6 +12,9 @@ This repo has the first backend skeleton for the MVP:
 - LangGraph-powered demo customer-issue workflow
 - Python-rendered dashboard with workspace, agent registry, shared memory, timeline, and approval views
 - Docker Compose PostgreSQL with pgvector enabled
+- Context packets for workflow continuation
+- One-call demo bootstrap
+- System readiness endpoint
 
 ## Local Setup
 
@@ -78,6 +81,10 @@ Or open the interactive API docs:
 http://127.0.0.1:8000/docs
 ```
 
+For a guided demo, see [DEMO.md](DEMO.md).
+
+For deployment notes, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## Demo Flow
 
 1. Create a workspace with `POST /workspaces`.
@@ -89,9 +96,9 @@ http://127.0.0.1:8000/docs
 
 For a one-call demo setup, use `POST /workflows/demo-bootstrap`. It creates a workspace, runs the customer issue workflow, and returns the workflow result plus workspace overview.
 
-## Next Build Step
+## MVP Status
 
-Connect the LangGraph agent nodes to a configurable LLM provider while keeping every memory write, memory retrieval, and approval request logged in the activity timeline.
+The core MVP is complete. Remaining work should focus on deployment, fresh-environment verification, and production hardening.
 
 ## Current Architecture
 

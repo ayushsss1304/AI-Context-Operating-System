@@ -33,6 +33,8 @@ The product is not a chatbot. It is an operating layer for shared organizational
 
 ## Phase 1 - Repository And Foundation
 
+Status: complete.
+
 Deliverables:
 
 - Monorepo structure.
@@ -56,6 +58,8 @@ ai-context-os/
 ```
 
 ## Phase 2 - Backend Data Model
+
+Status: complete.
 
 Build the FastAPI backend first.
 
@@ -86,6 +90,8 @@ Acceptance criteria:
 - Seed data can create the default demo agents.
 
 ## Phase 3 - CRUD APIs
+
+Status: complete.
 
 Implement REST endpoints before agent orchestration.
 
@@ -131,6 +137,8 @@ Acceptance criteria:
 
 ## Phase 4 - Shared Memory Search
 
+Status: complete for MVP.
+
 Start simple, then improve.
 
 Initial implementation:
@@ -147,6 +155,8 @@ Acceptance criteria:
 - Search results include enough metadata to explain why the memory matters.
 
 ## Phase 5 - Agent Workflow
+
+Status: complete for MVP.
 
 Use LangGraph as the workflow engine, not as the whole product.
 
@@ -177,6 +187,8 @@ Acceptance criteria:
 
 ## Phase 6 - Frontend Dashboard
 
+Status: complete for MVP using the Python FastAPI dashboard.
+
 Build the frontend after the backend flow works.
 
 Pages:
@@ -202,6 +214,8 @@ Acceptance criteria:
 - A human can approve or reject the final recommendation.
 
 ## Phase 7 - Demo Polish
+
+Status: complete for MVP.
 
 Add only what helps the MVP story.
 
@@ -249,3 +263,28 @@ The MVP is successful when a user can:
 6. View the full task activity timeline.
 7. Approve or reject the final output.
 8. Resume the task later with context intact.
+
+Current status: all MVP success criteria are implemented.
+
+## Remaining Essential Work
+
+These are the remaining important steps before calling this a presentable MVP release:
+
+1. Verify setup from a fresh clone and fresh database.
+2. Deploy the FastAPI app and managed PostgreSQL database.
+3. Run Alembic migrations in the deployed environment.
+4. Smoke-test `/dashboard`, `/workflows/demo-bootstrap`, `/tasks/{task_id}/context-packet`, and `/system/status` after deploy.
+5. Tag the release as `v0.1.0-mvp`.
+
+## Deferred Until After MVP
+
+These are intentionally not required for the MVP:
+
+- Enterprise authentication and SSO.
+- Billing.
+- Complex RBAC.
+- External integrations.
+- Agent marketplace.
+- Kubernetes.
+- Mobile app.
+- Full separate frontend replacement for the Python dashboard.
