@@ -41,3 +41,19 @@ Completed on May 16, 2026:
 - External integrations.
 - Agent marketplace.
 - Full production frontend replacement.
+
+## v0.1.1-deploy-ready
+
+Deployment readiness update for the MVP.
+
+### Added
+
+- Render Blueprint deployment file: `render.yaml`.
+- Managed Postgres deployment notes.
+- Database URL normalization for hosted Postgres URLs such as `postgres://...` and `postgresql://...`.
+- Tests for database URL normalization.
+
+### Verification
+
+- Backend tests passed: `18 passed`.
+- Fresh Alembic migration check passed.
