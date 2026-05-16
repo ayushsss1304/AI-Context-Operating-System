@@ -30,8 +30,12 @@ def test_demo_bootstrap_creates_workspace_and_runs_full_demo(session, monkeypatc
     assert result["overview"]["workspace"].name == "Bootstrap Demo"
     assert len(result["overview"]["agents"]) == 4
     assert len(result["overview"]["tasks"]) == 1
-    assert len(result["overview"]["memories"]) == 3
+    assert len(result["overview"]["memories"]) == 6
     assert len(result["overview"]["approvals"]) == 1
     assert result["workflow"]["task"].status == "waiting_for_approval"
     assert len(result["workflow"]["handoff_trace"]) == 5
     assert result["overview"]["handoff_trace"][-1]["actor"] == "Manager Agent"
+    assert any(
+        memory.title == "Prior incident - MX700 Wi-Fi reconnect regression"
+        for memory in result["overview"]["memories"]
+    )

@@ -40,7 +40,7 @@ def test_system_status_is_ready_after_demo_bootstrap(session, monkeypatch):
     assert status["status"] == "ready"
     assert status["counts"]["workspaces"] == 1
     assert status["counts"]["agents"] == 4
-    assert status["counts"]["memories"] == 3
+    assert status["counts"]["memories"] == 6
     assert status["counts"]["activities"] == 5
     assert status["counts"]["pending_approvals"] == 1
     assert all(module["ready"] for module in status["modules"][:7])

@@ -25,10 +25,17 @@ class CustomerIssueDemoResponse(SQLModel):
 
 
 class DemoBootstrapRequest(SQLModel):
-    workspace_name: str = "Demo Company"
-    workspace_description: str | None = "AI Context OS demo workspace"
-    customer_name: str = "Acme SaaS"
-    issue: str = "Users report that dashboard settings disappear after refreshing the page."
+    workspace_name: str = "Panasonic Smart TV Reliability Desk"
+    workspace_description: str | None = (
+        "Shared AI workspace for connected TV support, QA, firmware, product, and release decisions."
+    )
+    customer_name: str = "Panasonic Support Escalation - Europe Smart TV Line"
+    issue: str = (
+        "After firmware v4.18.2 shipped to Panasonic MX800 and MX950 Smart TV models in Germany and the UK, "
+        "customers report Wi-Fi disconnects within 10 to 20 minutes of opening Netflix or YouTube. Support has "
+        "42 tickets in 36 hours, mostly from dual-band home routers. Rebooting the TV temporarily restores the "
+        "connection, but the issue returns after streaming resumes."
+    )
 
 
 class DemoBootstrapResponse(SQLModel):

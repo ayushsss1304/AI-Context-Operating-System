@@ -16,6 +16,7 @@ from app.models.task import Task
 from app.models.workspace import Workspace
 from app.schemas.memory import MemorySearchRequest
 from app.schemas.workflow import CustomerIssueDemoRequest, DemoBootstrapRequest
+from app.services.demo_scenario_service import product_company_demo_defaults
 from app.services.memory_service import MemoryService
 from app.services.task_continuation_service import continue_task_from_context
 from app.services.timeline_service import build_handoff_trace
@@ -177,15 +178,20 @@ def create_dashboard_workspace(
 
 @router.post("/dashboard/demo-bootstrap")
 def bootstrap_dashboard_demo(
-    workspace_name: str = Form("Demo Company"),
-    customer_name: str = Form("Acme SaaS"),
-    issue: str = Form("Users report that dashboard settings disappear after refreshing the page."),
+    workspace_name: str = Form("Panasonic Smart TV Reliability Desk"),
+    customer_name: str = Form("Panasonic Support Escalation - Europe Smart TV Line"),
+    issue: str = Form(
+        "After firmware v4.18.2 shipped to Panasonic MX800 and MX950 Smart TV models in Germany and the UK, "
+        "customers report Wi-Fi disconnects within 10 to 20 minutes of opening Netflix or YouTube. Support has "
+        "42 tickets in 36 hours, mostly from dual-band home routers. Rebooting the TV temporarily restores the "
+        "connection, but the issue returns after streaming resumes."
+    ),
     session: Session = Depends(get_session),
 ) -> RedirectResponse:
     result = demo_bootstrap(
         DemoBootstrapRequest(
             workspace_name=workspace_name,
-            workspace_description="AI Context OS one-click demo workspace",
+            workspace_description=product_company_demo_defaults()["workspace_description"],
             customer_name=customer_name,
             issue=issue,
         ),

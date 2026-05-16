@@ -14,6 +14,7 @@ This repo contains the working MVP:
 - Docker Compose PostgreSQL with pgvector enabled
 - Context packets for workflow continuation
 - One-call demo bootstrap
+- Realistic product-company demo data for a Smart TV firmware escalation
 - System readiness endpoint
 - Render deployment blueprint
 
@@ -97,7 +98,7 @@ For MVP release notes, see [RELEASE_NOTES.md](RELEASE_NOTES.md).
 5. Inspect task activity with `GET /activities?workspace_id=...`.
 6. Approve or reject the pending approval.
 
-For a one-call demo setup, use `POST /workflows/demo-bootstrap`. It creates a workspace, runs the customer issue workflow, and returns the workflow result plus workspace overview.
+For a one-call demo setup, use `POST /workflows/demo-bootstrap`. It creates a Panasonic-style Smart TV reliability workspace, seeds realistic prior incident/QA/release-policy memories, runs the customer issue workflow, and returns the workflow result plus workspace overview.
 
 ## MVP Status
 

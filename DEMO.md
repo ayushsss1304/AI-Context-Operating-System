@@ -18,6 +18,8 @@ http://127.0.0.1:8000/dashboard
 ## Demo Flow
 
 1. Click **Create Full Demo**.
+   - The demo uses a Panasonic-style Smart TV firmware escalation.
+   - The production issue is Wi-Fi disconnects after firmware v4.18.2 on MX800 and MX950 models.
 2. Show **Demo Summary**.
    - It should show the active task status, owner, memories, events, and current step.
 3. Show **Agent Registry**.
@@ -32,7 +34,7 @@ http://127.0.0.1:8000/dashboard
    - Product creates impact summary.
    - Manager requests approval.
 5. Show **Shared Memory**.
-   - Confirm support, engineering, and product memories exist.
+   - Confirm seeded prior incident, QA playbook, release policy, support, engineering, and product memories exist.
 6. Open **Context packet** from Task Detail.
    - This proves the task can be resumed later with owner, memories, approvals, and handoff trace.
 7. Use **Continue Task**.
@@ -53,7 +55,7 @@ Create a full demo with one API call:
 ```bash
 curl -X POST http://127.0.0.1:8000/workflows/demo-bootstrap ^
   -H "Content-Type: application/json" ^
-  -d "{\"workspace_name\":\"Demo Company\",\"customer_name\":\"Acme SaaS\",\"issue\":\"Users report that dashboard settings disappear after refreshing the page.\"}"
+  -d "{\"workspace_name\":\"Panasonic Smart TV Reliability Desk\",\"customer_name\":\"Panasonic Support Escalation - Europe Smart TV Line\",\"issue\":\"After firmware v4.18.2 shipped to Panasonic MX800 and MX950 Smart TV models in Germany and the UK, customers report Wi-Fi disconnects within 10 to 20 minutes of opening Netflix or YouTube.\"}"
 ```
 
 Then check readiness:

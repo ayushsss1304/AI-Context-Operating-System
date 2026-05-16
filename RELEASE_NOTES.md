@@ -57,3 +57,20 @@ Deployment readiness update for the MVP.
 
 - Backend tests passed: `18 passed`.
 - Fresh Alembic migration check passed.
+
+## v0.1.2-realistic-demo-data
+
+Realistic product-company demo data update.
+
+### Added
+
+- Panasonic-style Smart TV reliability demo workspace.
+- Firmware v4.18.2 Wi-Fi disconnect escalation scenario.
+- Seeded prior incident memory for MX700 Wi-Fi reconnect regression.
+- Seeded QA reproduction playbook for streaming connectivity regressions.
+- Seeded release policy memory for connected TV hotfix thresholds.
+
+### Verification
+
+- Backend tests passed: `18 passed`.
+- Local demo bootstrap smoke test confirmed 4 agents, 6 memories, and a pending approval.

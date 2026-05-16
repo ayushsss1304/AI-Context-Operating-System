@@ -262,23 +262,23 @@
           <form class="panel-body" method="post" action="/dashboard/demo-bootstrap">
             <div class="field">
               <label for="demo_workspace_name">Demo Workspace</label>
-              <input id="demo_workspace_name" name="workspace_name" value="Demo Company" required>
+              <input id="demo_workspace_name" name="workspace_name" value="Panasonic Smart TV Reliability Desk" required>
             </div>
             <div class="field">
               <label for="demo_customer_name">Demo Customer</label>
-              <input id="demo_customer_name" name="customer_name" value="Acme SaaS" required>
+              <input id="demo_customer_name" name="customer_name" value="Panasonic Support Escalation - Europe Smart TV Line" required>
             </div>
-            <input type="hidden" name="issue" value="Users report that dashboard settings disappear after refreshing the page.">
+            <input type="hidden" name="issue" value="After firmware v4.18.2 shipped to Panasonic MX800 and MX950 Smart TV models in Germany and the UK, customers report Wi-Fi disconnects within 10 to 20 minutes of opening Netflix or YouTube. Support has 42 tickets in 36 hours, mostly from dual-band home routers. Rebooting the TV temporarily restores the connection, but the issue returns after streaming resumes.">
             <button type="submit">Create Full Demo</button>
           </form>
           <form class="panel-body" method="post" action="/dashboard/workspaces">
             <div class="field">
               <label for="name">Name</label>
-              <input id="name" name="name" value="Demo Company" required>
+              <input id="name" name="name" value="Panasonic Smart TV Reliability Desk" required>
             </div>
             <div class="field">
               <label for="description">Description</label>
-              <input id="description" name="description" value="AI Context OS demo workspace">
+              <input id="description" name="description" value="Shared AI workspace for connected TV support, QA, firmware, product, and release decisions.">
             </div>
             <button type="submit">Create Workspace</button>
           </form>
@@ -332,11 +332,11 @@
             <input type="hidden" name="workspace_id" value="{{ active_workspace_id }}">
             <div class="field">
               <label for="customer_name">Customer</label>
-              <input id="customer_name" name="customer_name" value="Acme SaaS" required>
+              <input id="customer_name" name="customer_name" value="Panasonic Support Escalation - Europe Smart TV Line" required>
             </div>
             <div class="field">
               <label for="issue">Issue</label>
-              <textarea id="issue" name="issue" required>Users report that dashboard settings disappear after refreshing the page.</textarea>
+              <textarea id="issue" name="issue" required>After firmware v4.18.2 shipped to Panasonic MX800 and MX950 Smart TV models in Germany and the UK, customers report Wi-Fi disconnects within 10 to 20 minutes of opening Netflix or YouTube. Support has 42 tickets in 36 hours, mostly from dual-band home routers. Rebooting the TV temporarily restores the connection, but the issue returns after streaming resumes.</textarea>
             </div>
             <button type="submit" {% if not active_workspace_id %}disabled{% endif %}>Run Agent Workflow</button>
           </form>

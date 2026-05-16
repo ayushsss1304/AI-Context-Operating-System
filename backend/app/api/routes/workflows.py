@@ -9,8 +9,9 @@ from app.schemas.workflow import (
     DemoBootstrapRequest,
     DemoBootstrapResponse,
 )
+from app.services.demo_scenario_service import seed_product_company_memories
 from app.services.workspace_overview_service import build_workspace_overview
-from app.services.workflow_service import run_customer_issue_demo
+from app.services.workflow_service import ensure_demo_agents, run_customer_issue_demo
 
 router = APIRouter(prefix="/workflows", tags=["workflows"])
 
@@ -35,6 +36,8 @@ def demo_bootstrap(
     session.add(workspace)
     session.commit()
     session.refresh(workspace)
+    agents = ensure_demo_agents(session, workspace.id)
+    seed_product_company_memories(session, workspace.id, agents)
 
     workflow = run_customer_issue_demo(
         session,
