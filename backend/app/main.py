@@ -1,3 +1,7 @@
+from pathlib import Path
+
+from alembic import command
+from alembic.config import Config
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,8 +24,17 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup() -> None:
+    if settings.auto_run_migrations:
+        run_migrations()
     if settings.auto_create_tables:
         create_db_and_tables()
+
+
+def run_migrations() -> None:
+    root_config = Path("alembic.ini")
+    backend_config = Path(__file__).resolve().parents[1] / "alembic.ini"
+    config_path = root_config if root_config.exists() else backend_config
+    command.upgrade(Config(str(config_path)), "head")
 
 
 @app.get("/health")
