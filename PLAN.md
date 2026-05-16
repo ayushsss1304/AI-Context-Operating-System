@@ -270,11 +270,17 @@ Current status: all MVP success criteria are implemented.
 
 These are the remaining important steps before calling this a presentable MVP release:
 
-1. Verify setup from a fresh clone and fresh database.
-2. Deploy the FastAPI app and managed PostgreSQL database.
-3. Run Alembic migrations in the deployed environment.
-4. Smoke-test `/dashboard`, `/workflows/demo-bootstrap`, `/tasks/{task_id}/context-packet`, and `/system/status` after deploy.
-5. Tag the release as `v0.1.0-mvp`.
+1. Deploy the FastAPI app and managed PostgreSQL database.
+2. Run Alembic migrations in the deployed environment.
+3. Smoke-test `/dashboard`, `/workflows/demo-bootstrap`, `/tasks/{task_id}/context-packet`, and `/system/status` after deploy.
+
+Completed release checks:
+
+- Fresh clone compile check passed.
+- Fresh clone backend tests passed.
+- Fresh database Alembic migration passed.
+- Fresh runtime smoke test passed.
+- MVP release tag prepared as `v0.1.0-mvp`.
 
 ## Deferred Until After MVP
 

@@ -85,6 +85,8 @@ For a guided demo, see [DEMO.md](DEMO.md).
 
 For deployment notes, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
+For MVP release notes, see [RELEASE_NOTES.md](RELEASE_NOTES.md).
+
 ## Demo Flow
 
 1. Create a workspace with `POST /workspaces`.
